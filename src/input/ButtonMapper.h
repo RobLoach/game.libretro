@@ -40,6 +40,10 @@ namespace LIBRETRO
 
     libretro_device_t GetLibretroType(const std::string& strControllerId);
 
+    bool HasSubclass(const std::string& strControllerId);
+
+    libretro_subclass_t GetSubclass(const std::string& strControllerId);
+
     int GetLibretroIndex(const std::string& strControllerId, const std::string& strFeatureName);
     libretro_device_t GetLibretroDevice(const std::string& strControllerId, const std::string& strFeatureName) const;
     int GetAxisID(const std::string& strControllerId, const std::string& strFeatureName) const;

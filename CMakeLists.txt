@@ -22,6 +22,7 @@ set(LIBRETRO_SOURCES src/client.cpp
                      src/input/ControllerTopology.cpp
                      src/input/DefaultControllerTranslator.cpp
                      src/input/InputManager.cpp
+                     src/input/InputTranslator.cpp
                      src/input/LibretroDevice.cpp
                      src/input/LibretroDeviceInput.cpp
                      src/libretro/ClientBridge.cpp
@@ -50,6 +51,7 @@ set(LIBRETRO_HEADERS src/GameInfoLoader.h
                      src/input/DefaultControllerTranslator.h
                      src/input/InputDefinitions.h
                      src/input/InputManager.h
+                     src/input/InputTranslator.h
                      src/input/LibretroDevice.h
                      src/input/LibretroDeviceInput.h
                      src/libretro/ClientBridge.h

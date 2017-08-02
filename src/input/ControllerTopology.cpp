@@ -20,6 +20,7 @@
 
 #include "ControllerTopology.h"
 #include "InputDefinitions.h"
+#include "InputTranslator.h"
 #include "libretro/LibretroEnvironment.h"
 #include "log/Log.h"
 
@@ -140,6 +141,19 @@ CControllerTopology::PortPtr CControllerTopology::DeserializePort(const TiXmlEle
 {
   PortPtr port;
 
+  const char* strPortType = pElement->Attribute(TOPOLOGY_XML_ATTR_PORT_TYPE);
+  if (strPortType == nullptr)
+  {
+    esyslog("<%s> tag is missing attribute \"%s\", can't proceed without port ID", TOPOLOGY_XML_ELEM_PORT, TOPOLOGY_XML_ATTR_PORT_TYPE);
+    return port;
+  }
+  GAME_PORT_TYPE portType = CInputTranslator::GetPortType(strPortType);
+  if (portType == GAME_PORT_UNKNOWN)
+  {
+    esyslog("<%s> tag has invalid attribute \"%s\" with value \"%s\"", TOPOLOGY_XML_ELEM_PORT, TOPOLOGY_XML_ATTR_PORT_TYPE, strPortType);
+    return port;
+  }
+
   const char* strPortId = pElement->Attribute(TOPOLOGY_XML_ATTR_PORT_ID);
   if (strPortId == nullptr)
   {
@@ -147,7 +161,7 @@ CControllerTopology::PortPtr CControllerTopology::DeserializePort(const TiXmlEle
   }
   else
   {
-    port.reset(new Port{ strPortId });
+    port.reset(new Port{ portType, strPortId });
 
     const TiXmlElement* pChild = pElement->FirstChildElement(TOPOLOGY_XML_ELEM_ACCEPTS);
     if (pChild == nullptr)
@@ -190,10 +204,6 @@ CControllerTopology::ControllerPtr CControllerTopology::DeserializeController(co
     const char* strModel = pElement->Attribute(TOPOLOGY_XML_ATTR_MODEL);
     if (strModel != nullptr)
       controller->model = strModel;
-
-    const char* strExclusive = pElement->Attribute(TOPOLOGY_XML_ATTR_EXCLUSIVE);
-    if (strExclusive != nullptr)
-      controller->exclusive = (std::string(strExclusive) != "false");
 
     const TiXmlElement* pChild = pElement->FirstChildElement(TOPOLOGY_XML_ELEM_PORT);
     for ( ; pChild != nullptr; pChild = pChild->NextSiblingElement(TOPOLOGY_XML_ELEM_PORT))
@@ -250,8 +260,6 @@ void CControllerTopology::GetControllers(const std::vector<ControllerPtr> &contr
 
       if (!controllerVec[i]->model.empty())
         devices[i].model = controllerVec[i]->model.c_str();
-
-      devices[i].exclusive = controllerVec[i]->exclusive;
 
       GetPorts(controllerVec[i]->ports, devices[i].available_ports, devices[i].port_count);
     }

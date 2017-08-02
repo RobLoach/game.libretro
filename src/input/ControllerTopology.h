@@ -19,6 +19,8 @@
  */
 #pragma once
 
+#include <kodi/kodi_game_types.h>
+
 #include <memory>
 #include <string>
 #include <vector>
@@ -64,6 +66,7 @@ namespace LIBRETRO
 
     struct Port
     {
+      GAME_PORT_TYPE type;
       std::string portId;
       std::vector<ControllerPtr> accepts;
     };
@@ -72,7 +75,6 @@ namespace LIBRETRO
     {
       std::string controllerId;
       std::string model;
-      bool exclusive;
       std::vector<PortPtr> ports;
     };
 

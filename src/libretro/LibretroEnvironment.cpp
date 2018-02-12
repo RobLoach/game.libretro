@@ -171,6 +171,10 @@ bool CLibretroEnvironment::EnvironmentCallback(unsigned int cmd, void *data)
       if (!typedData)
         return false;
       m_videoFormat = LibretroTranslator::GetVideoFormat(*typedData);
+
+      if (m_videoFormat == GAME_PIXEL_FORMAT_UNKNOWN)
+        return false;
+
       break;
     }
   case RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS:
